@@ -1,0 +1,368 @@
+openapi: 3.1.0
+info:
+  title: SocialConnect API
+  description: API RESTful de gestão para instituições sociais (Disciplina ITE005)
+  version: 0.0.1-SNAPSHOT
+servers:
+  - url: http://localhost:8080
+    description: Servidor de Desenvolvimento Local
+
+paths:
+  /api/v1/beneficiarios:
+    get:
+      summary: Lista todos os beneficiários
+      description: Retorna uma lista paginada de beneficiários com filtros opcionais por nome e CPF.
+      tags: [Beneficiários]
+      parameters:
+        - name: nome
+          in: query
+          description: Filtro parcial por nome
+          schema: { type: string }
+        - name: cpf
+          in: query
+          description: Filtro exato por CPF
+          schema: { type: string }
+        - name: page
+          in: query
+          schema: { type: integer, default: 0 }
+        - name: size
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: sort
+          in: query
+          schema: { type: string, default: "nome,asc" }
+      responses:
+        '200':
+          description: Lista paginada de beneficiários
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProblemDetail' }
+    post:
+      summary: Cria um novo beneficiário
+      description: Cadastra um novo beneficiário com validação de CPF único.
+      tags: [Beneficiários]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BeneficiarioCreate'
+      responses:
+        '201':
+          description: Beneficiário criado com sucesso
+          headers:
+            Location:
+              schema: { type: string }
+              description: URI do recurso criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Beneficiario'
+        '400':
+          description: Erro de validação de dados
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProblemDetail' }
+        '409':
+          description: CPF já cadastrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProblemDetail' }
+
+  /api/v1/beneficiarios/{id_beneficiario}:
+    get:
+      summary: Busca um beneficiário pelo ID
+      tags: [Beneficiários]
+      parameters:
+        - name: id_beneficiario
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Dados do beneficiário
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Beneficiario' }
+        '404':
+          description: Beneficiário não encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProblemDetail' }
+    put:
+      summary: Atualiza totalmente um beneficiário
+      tags: [Beneficiários]
+      parameters:
+        - name: id_beneficiario
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BeneficiarioCreate' }
+      responses:
+        '200':
+          description: Beneficiário atualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Beneficiario' }
+        '404':
+          description: Beneficiário não encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProblemDetail' }
+    patch:
+      summary: Atualiza parcialmente um beneficiário
+      tags: [Beneficiários]
+      parameters:
+        - name: id_beneficiario
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BeneficiarioPatch' }
+      responses:
+        '200':
+          description: Beneficiário atualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Beneficiario' }
+        '404':
+          description: Beneficiário não encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProblemDetail' }
+    delete:
+      summary: Remove um beneficiário
+      tags: [Beneficiários]
+      parameters:
+        - name: id_beneficiario
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Beneficiário removido com sucesso
+        '404':
+          description: Beneficiário não encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProblemDetail' }
+
+  /api/v1/doadores:
+    get:
+      summary: Lista todos os doadores
+      tags: [Doadores]
+      parameters:
+        - name: nome
+          in: query
+          description: Filtro por nome
+          schema: { type: string }
+        - name: page
+          in: query
+          schema: { type: integer }
+        - name: size
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Lista de doadores
+    post:
+      summary: Cadastra um novo doador
+      tags: [Doadores]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DoadorCreate' }
+      responses:
+        '201':
+          description: Doador criado com sucesso
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Doador' }
+
+  /api/v1/doadores/{id_doador}:
+    get:
+      summary: Busca doador por ID
+      tags: [Doadores]
+      parameters:
+        - name: id_doador
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Dados do doador
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Doador' }
+        '404':
+          description: Doador não encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProblemDetail' }
+    delete:
+      summary: Remove um doador
+      tags: [Doadores]
+      parameters:
+        - name: id_doador
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Doador removido com sucesso
+
+  /api/v1/doacoes:
+    get:
+      summary: Lista doações com filtros dinâmicos
+      tags: [Doações]
+      parameters:
+        - name: dataInicio
+          in: query
+          schema: { type: string, format: date }
+        - name: dataFim
+          in: query
+          schema: { type: string, format: date }
+        - name: tipo
+          in: query
+          schema: { type: string, enum: [ALIMENTO, ROUPA, FINANCEIRA] }
+        - name: page
+          in: query
+          schema: { type: integer }
+        - name: size
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Lista de doações filtradas
+    post:
+      summary: Registra uma nova doação
+      tags: [Doações]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DoacaoCreate' }
+      responses:
+        '201':
+          description: Doação criada com sucesso
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Doacao' }
+
+  /api/v1/doacoes/{id_doacao}:
+    get:
+      summary: Busca doação por ID
+      tags: [Doações]
+      parameters:
+        - name: id_doacao
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Dados da doação
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Doacao' }
+        '404':
+          description: Doação não encontrada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProblemDetail' }
+    delete:
+      summary: Remove uma doação
+      tags: [Doações]
+      parameters:
+        - name: id_doacao
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Doação removida com sucesso
+
+components:
+  schemas:
+    Beneficiario:
+      type: object
+      properties:
+        idBeneficiario: { type: integer, example: 1 }
+        nome: { type: string, example: "Maria da Silva" }
+        cpf: { type: string, example: "12345678900" }
+        telefone: { type: string, example: "11999999999" }
+        endereco: { type: string, example: "Rua das Flores, 123" }
+        situacaoVulnerabilidade: { type: string, example: "Renda familiar baixa" }
+        dataCadastro: { type: string, format: date, example: "2026-08-29" }
+    BeneficiarioCreate:
+      type: object
+      required: [nome, cpf]
+      properties:
+        nome: { type: string, example: "Maria da Silva" }
+        cpf: { type: string, example: "12345678900" }
+        telefone: { type: string, example: "11999999999" }
+        endereco: { type: string, example: "Rua das Flores, 123" }
+        situacaoVulnerabilidade: { type: string, example: "Renda familiar baixa" }
+    BeneficiarioPatch:
+      type: object
+      properties:
+        nome: { type: string, example: "Maria da Silva Santos" }
+        telefone: { type: string, example: "11988887777" }
+        endereco: { type: string, example: "Rua Nova, 456" }
+        situacaoVulnerabilidade: { type: string, example: "Renda familiar baixa" }
+    Doador:
+      type: object
+      properties:
+        idDoador: { type: integer, example: 1 }
+        nome: { type: string, example: "Fundação Esperança" }
+        tipo: { type: string, enum: [PESSOA_FISICA, PESSOA_JURIDICA], example: "PESSOA_JURIDICA" }
+    DoadorCreate:
+      type: object
+      required: [nome, tipo]
+      properties:
+        nome: { type: string, example: "Fundação Esperança" }
+        tipo: { type: string, enum: [PESSOA_FISICA, PESSOA_JURIDICA], example: "PESSOA_JURIDICA" }
+    Doacao:
+      type: object
+      properties:
+        idDoacao: { type: integer, example: 1 }
+        idDoador: { type: integer, example: 1 }
+        nomeDoador: { type: string, example: "Fundação Esperança" }
+        dataDoacao: { type: string, format: date, example: "2026-08-20" }
+        valor: { type: number, format: float, example: 250.00 }
+        tipo: { type: string, enum: [ALIMENTO, ROUPA, FINANCEIRA], example: "ALIMENTO" }
+        descricao: { type: string, example: "10 cestas básicas" }
+    DoacaoCreate:
+      type: object
+      required: [idDoador, dataDoacao, tipo]
+      properties:
+        idDoador: { type: integer, example: 1 }
+        dataDoacao: { type: string, format: date, example: "2026-08-20" }
+        valor: { type: number, format: float, example: 250.00 }
+        tipo: { type: string, enum: [ALIMENTO, ROUPA, FINANCEIRA], example: "ALIMENTO" }
+        descricao: { type: string, example: "10 cestas básicas" }
+    ProblemDetail:
+      type: object
+      properties:
+        type: { type: string, example: "https://socialconnect.api/errors/validacao" }
+        title: { type: string, example: "Erro de validação" }
+        status: { type: integer, example: 400 }
+        detail: { type: string, example: "Um ou mais campos são inválidos." }
+        instance: { type: string, example: "/api/v1/beneficiarios" }
+        timestamp: { type: string, format: date-time, example: "2026-08-29T14:30:00" }
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field: { type: string, example: "cpf" }
+              message: { type: string, example: "CPF inválido" }
