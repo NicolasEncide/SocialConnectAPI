@@ -7,6 +7,7 @@ import br.com.socialconnect.api.produtos.model.CategoriaProduto;
 import br.com.socialconnect.api.produtos.service.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,7 +39,7 @@ public class ProdutoController {
             description = "Retorna uma lista paginada de produtos, com filtros opcionais por nome (parcial) e categoria."
     )
     @ApiResponse(responseCode = "200", description = "Lista paginada retornada com sucesso")
-    @ApiResponse(responseCode = "400", description = "Parâmetros de consulta inválidos",
+    @ApiResponse(responseCode = "400", description = "Parâmetros de consulta ou ordenação inválidos",
             content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     public ResponseEntity<Page<ProdutoResponseDTO>> listar(
             @Parameter(description = "Nome para filtrar (parcial, sem distinção de maiúsculas/minúsculas)", example = "Arroz")
@@ -54,9 +55,9 @@ public class ProdutoController {
     @GetMapping("/{id_produto}")
     @Operation(
             summary = "Busca produto por ID",
-            description = "Retorna 200 OK com o produto, ou 404 Not Found com Problem Details caso não exista."
+            description = "Retorna os detalhes de um produto específico através de seu identificador único."
     )
-    @ApiResponse(responseCode = "200", description = "Produto encontrado")
+    @ApiResponse(responseCode = "200", description = "Produto encontrado com sucesso")
     @ApiResponse(responseCode = "404", description = "Produto não encontrado",
             content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     public ResponseEntity<ProdutoResponseDTO> buscarPorId(
@@ -68,9 +69,13 @@ public class ProdutoController {
     @PostMapping
     @Operation(
             summary = "Cria um novo produto",
-            description = "Cria produto. Retorna 201 Created com cabeçalho Location. Possíveis erros: 400, 409, 422."
+            description = "Cadastra um novo produto no estoque. Retorna 201 Created com o cabeçalho Location apontando para o recurso criado."
     )
-    @ApiResponse(responseCode = "201", description = "Produto criado com sucesso")
+    @ApiResponse(
+            responseCode = "201",
+            description = "Produto criado com sucesso",
+            headers = @Header(name = "Location", description = "URI do produto recém-criado", schema = @Schema(type = "string"))
+    )
     @ApiResponse(responseCode = "400", description = "Dados da requisição inválidos",
             content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     @ApiResponse(responseCode = "409", description = "Nome já cadastrado no sistema",
@@ -87,7 +92,7 @@ public class ProdutoController {
     @PutMapping("/{id_produto}")
     @Operation(
             summary = "Atualização total do produto",
-            description = "Atualização total. Retorna 200 OK. Possíveis erros: 400, 404, 409, 422."
+            description = "Substitui integralmente as informações de um produto existente mantendo a data de cadastro original."
     )
     @ApiResponse(responseCode = "200", description = "Produto atualizado com sucesso")
     @ApiResponse(responseCode = "400", description = "Dados da requisição inválidos",
@@ -109,7 +114,7 @@ public class ProdutoController {
     @DeleteMapping("/{id_produto}")
     @Operation(
             summary = "Remove um produto",
-            description = "Remove produto. Retorna 204 No Content ou 404 Not Found."
+            description = "Exclui um produto do sistema através de seu identificador único."
     )
     @ApiResponse(responseCode = "204", description = "Produto removido com sucesso")
     @ApiResponse(responseCode = "404", description = "Produto não encontrado",

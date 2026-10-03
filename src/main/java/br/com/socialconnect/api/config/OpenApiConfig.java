@@ -3,6 +3,7 @@ package br.com.socialconnect.api.config;
 import br.com.socialconnect.api.beneficiarios.controller.BeneficiarioController;
 import br.com.socialconnect.api.doacoes.controller.DoacaoController;
 import br.com.socialconnect.api.doadores.controller.DoadorController;
+import br.com.socialconnect.api.produtos.controller.ProdutoController;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.StringSchema;
@@ -30,7 +31,8 @@ public class OpenApiConfig {
                 if (handlerMethod.getBeanType().equals(DoacaoController.class)) {
                     sortExample = "dataDoacao,desc";
                 } else if (handlerMethod.getBeanType().equals(BeneficiarioController.class) ||
-                           handlerMethod.getBeanType().equals(DoadorController.class)) {
+                           handlerMethod.getBeanType().equals(DoadorController.class) ||
+                           handlerMethod.getBeanType().equals(ProdutoController.class)) {
                     sortExample = "nome,asc";
                 }
                 final String example = sortExample;
