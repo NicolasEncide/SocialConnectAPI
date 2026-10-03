@@ -1,26 +1,17 @@
-# Registro de Uso de IA Generativa
+## Declaração de Uso de IA (A1)
 
-> **Política da disciplina:** O uso de IA generativa é permitido como
-> assistente. O discente é **integralmente responsável** por testar, auditar e
-> defender todo o código entregue, independentemente de como foi gerado.
+### Ferramentas utilizadas:
+- Gemini Antigravity
 
-## Instruções
+### Como utilizei:
+- Fiz grande parte do pacote de produtos na mão usando o pacote de beneficiários como exemplo, porém alterando e adicionando o que eu precisava para os produtos.
+- Usei IA para implementar o Swagger pois é muito código para escrever, apesar de eu entender como ele funciona.
+- Usei IA para limpar o código e corrigir eventuais erros meus que surgiram ao compilar.
 
-Para cada aula ou entrega, registre abaixo:
-- **Data**
-- **Ferramenta** (ChatGPT, Copilot, Claude, etc.)
-- **Prompt(s) utilizado(s)** (resumo ou cópia)
-- **O que foi feito com a saída** (copiado integralmente, adaptado, usado como referência, descartado)
+### O que eu entendo 100%:
+- Lógica geral Controller > Service > DTO > Model > Repository.
+- A lógica das validações e relações com o banco.
 
----
-
-## Registro
-
-| Data | Aula | Ferramenta | Prompt (resumo) | Uso da saída |
-|------|------|------------|-----------------|--------------|
-| _dd/mm/aaaa_ | _Aula XX_ | _ex: ChatGPT_ | _ex: "Como injetar dependência via construtor no Spring?"_ | _ex: "Adaptei o exemplo ao meu Service"_ |
-
----
-
-_Declaração: Ao submeter este repositório, confirmo que todo o código foi
-revisado, testado e compreendido por mim._
+### O que precisei estudar mais:
+- A parte de exceções, anotações e códigos HTTP customizados.
+- DTO.
