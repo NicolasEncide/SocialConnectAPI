@@ -36,9 +36,6 @@ class DoacaoServiceTest {
     @Test
     @DisplayName("Deve criar doação quando dados válidos")
     void deveCriarDoacaoQuandoDadosValidos() {
-        // ==========================================
-        // ARRANGE: Preparar o cenário
-        // ==========================================
         DoacaoRequestDTO dto = new DoacaoRequestDTO(
                 1L,
                 LocalDate.of(2026, 9, 11),
@@ -64,14 +61,8 @@ class DoacaoServiceTest {
                 .build();
         Mockito.when(doacaoRepository.save(Mockito.any(Doacao.class))).thenReturn(doacaoSalva);
 
-        // ==========================================
-        // ACT: Executar a ação
-        // ==========================================
         DoacaoResponseDTO resultado = doacaoService.criar(dto);
 
-        // ==========================================
-        // ASSERT: Verificar o resultado
-        // ==========================================
         Assertions.assertNotNull(resultado.idDoacao(), "ID da doação não deve ser nulo");
         Assertions.assertEquals(new BigDecimal("100.00"), resultado.valor());
         Mockito.verify(doadorService, Mockito.times(1)).buscarEntidadePorId(1L);
@@ -81,9 +72,6 @@ class DoacaoServiceTest {
     @Test
     @DisplayName("Deve lançar exceção quando doador não existir")
     void deveLancarExcecaoQuandoDoadorNaoExistir() {
-        // ==========================================
-        // ARRANGE: Preparar o cenário
-        // ==========================================
         DoacaoRequestDTO dto = new DoacaoRequestDTO(
                 999L,
                 LocalDate.of(2026, 9, 11),
@@ -95,9 +83,6 @@ class DoacaoServiceTest {
         Mockito.when(doadorService.buscarEntidadePorId(999L))
                 .thenThrow(new RecursoNaoEncontradoException("Doador não encontrado com o ID: 999"));
 
-        // ==========================================
-        // ACT & ASSERT: Executar e verificar exceção
-        // ==========================================
         Assertions.assertThrows(RuntimeException.class, () -> doacaoService.criar(dto));
         Mockito.verify(doadorService, Mockito.times(1)).buscarEntidadePorId(999L);
         Mockito.verify(doacaoRepository, Mockito.never()).save(Mockito.any());

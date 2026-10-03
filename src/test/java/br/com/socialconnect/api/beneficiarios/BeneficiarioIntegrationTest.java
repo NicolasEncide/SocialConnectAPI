@@ -43,7 +43,6 @@ class BeneficiarioIntegrationTest {
     @Test
     @DisplayName("Deve cadastrar um beneficiário com sucesso e retornar 201 com Location")
     void deveCadastrarBeneficiarioComSucesso() throws Exception {
-        // CPF válido para testes (52998224725)
         BeneficiarioRequestDTO dto = new BeneficiarioRequestDTO(
                 "Maria da Silva",
                 "52998224725",
@@ -67,7 +66,7 @@ class BeneficiarioIntegrationTest {
     void deveRetornarErro400QuandoCpfInvalido() throws Exception {
         BeneficiarioRequestDTO dto = new BeneficiarioRequestDTO(
                 "Maria da Silva",
-                "11122233344", // CPF inválido
+                "11122233344",
                 "11999998888",
                 "Rua das Flores, 123",
                 "Vulnerabilidade social"
@@ -94,13 +93,11 @@ class BeneficiarioIntegrationTest {
                 "Vulnerabilidade"
         );
 
-        // Primeiro cadastro
         mockMvc.perform(post("/api/v1/beneficiarios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated());
 
-        // Tentativa de duplicidade
         mockMvc.perform(post("/api/v1/beneficiarios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))

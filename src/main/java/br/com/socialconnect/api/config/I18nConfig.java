@@ -22,7 +22,6 @@ public class I18nConfig {
 
     @Bean
     public LocaleResolver localeResolver() {
-        // Força o idioma português do Brasil
         return new FixedLocaleResolver(Locale.of("pt", "BR"));
     }
 }

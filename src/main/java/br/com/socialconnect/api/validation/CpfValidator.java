@@ -8,7 +8,7 @@ public class CpfValidator implements ConstraintValidator<CPF, String> {
     @Override
     public boolean isValid(String cpf, ConstraintValidatorContext context) {
         if (cpf == null || cpf.isBlank()) {
-            return true; // Deixe @NotBlank cuidar de obrigatoriedade se necessário
+            return true;
         }
 
         String digits = cpf.replaceAll("\\D", "");
@@ -17,12 +17,10 @@ public class CpfValidator implements ConstraintValidator<CPF, String> {
             return false;
         }
 
-        // Rejeita sequências de dígitos iguais conhecidas (ex: 11111111111)
         if (digits.chars().distinct().count() == 1) {
             return false;
         }
 
-        // Cálculo do primeiro dígito verificador
         int sum1 = 0;
         for (int i = 0; i < 9; i++) {
             sum1 += (digits.charAt(i) - '0') * (10 - i);
@@ -34,7 +32,6 @@ public class CpfValidator implements ConstraintValidator<CPF, String> {
             return false;
         }
 
-        // Cálculo do segundo dígito verificador
         int sum2 = 0;
         for (int i = 0; i < 10; i++) {
             sum2 += (digits.charAt(i) - '0') * (11 - i);

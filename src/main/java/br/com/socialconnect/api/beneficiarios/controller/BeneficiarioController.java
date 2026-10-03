@@ -32,7 +32,6 @@ public class BeneficiarioController {
         this.service = service;
     }
 
-    // ✅ GET com paginação e filtros
     @GetMapping
     @Operation(
             summary = "Lista todos os beneficiários",
@@ -52,7 +51,6 @@ public class BeneficiarioController {
         return ResponseEntity.ok(service.listar(nome, cpf, pageable));
     }
 
-    // ✅ GET por ID
     @GetMapping("/{idBeneficiario}")
     @Operation(
             summary = "Busca um beneficiário por ID",
@@ -67,7 +65,6 @@ public class BeneficiarioController {
         return ResponseEntity.ok(service.buscarPorId(idBeneficiario));
     }
 
-    // ✅ POST com validação e 201 Created
     @PostMapping
     @Operation(
             summary = "Cria um novo beneficiário",
@@ -85,7 +82,6 @@ public class BeneficiarioController {
         return ResponseEntity.created(location).body(salvo);
     }
 
-    // ✅ PUT (substituição total)
     @PutMapping("/{idBeneficiario}")
     @Operation(
             summary = "Substitui os dados de um beneficiário",
@@ -106,7 +102,6 @@ public class BeneficiarioController {
         return ResponseEntity.ok(service.atualizar(idBeneficiario, dto));
     }
 
-    // ✅ PATCH (atualização parcial)
     @PatchMapping("/{idBeneficiario}")
     @Operation(
             summary = "Atualiza parcialmente um beneficiário",
@@ -123,7 +118,6 @@ public class BeneficiarioController {
         return ResponseEntity.ok(service.atualizarParcial(idBeneficiario, dto));
     }
 
-    // ✅ DELETE com 204 No Content
     @DeleteMapping("/{idBeneficiario}")
     @Operation(
             summary = "Remove um beneficiário",

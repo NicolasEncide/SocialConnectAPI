@@ -13,11 +13,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * Filtro para sanitizar o parâmetro de query 'sort' enviado pelo Swagger UI ou clientes REST.
- * Remove colchetes (ex: ["nome,asc"] ou [ "string" ]) e aspas que costumam causar PropertyReferenceException e HTTP 500/400.
- * Além disso, previne erro caso o exemplo genérico 'nome,asc' seja submetido para endpoints de doações.
- */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class SortParameterSanitizerFilter extends OncePerRequestFilter {
@@ -75,19 +70,16 @@ public class SortParameterSanitizerFilter extends OncePerRequestFilter {
         List<String> cleaned = new ArrayList<>();
         for (String raw : rawValues) {
             if (raw == null) continue;
-            // Remove colchetes, aspas e espaços extras
             String value = raw.replace("[", "")
                               .replace("]", "")
                               .replace("\"", "")
                               .replace("'", "")
                               .trim();
 
-            // Se for vazio ou o placeholder genérico padrão do Swagger ("string"), ignora para usar a ordenação padrão
             if (value.isEmpty() || "string".equalsIgnoreCase(value)) {
                 continue;
             }
 
-            // Se for endpoint de doações e vier 'nome' (exemplo herdado de outros endpoints no Swagger), ajusta para dataDoacao
             if (isDoacao && value.toLowerCase().startsWith("nome")) {
                 value = value.toLowerCase().contains("desc") ? "dataDoacao,desc" : "dataDoacao,asc";
             }

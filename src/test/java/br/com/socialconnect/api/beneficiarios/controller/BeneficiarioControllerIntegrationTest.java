@@ -59,9 +59,6 @@ class BeneficiarioControllerIntegrationTest {
     @Test
     @DisplayName("Deve criar beneficiário quando dados válidos")
     void deveCriarBeneficiarioQuandoDadosValidos() {
-        // ==========================================
-        // ARRANGE: Preparar o cenário
-        // ==========================================
         BeneficiarioRequestDTO dto = new BeneficiarioRequestDTO(
                 "Lucas Mendes",
                 "52998224725",
@@ -70,16 +67,10 @@ class BeneficiarioControllerIntegrationTest {
                 "Vulnerabilidade alimentar"
         );
 
-        // ==========================================
-        // ACT: Executar a ação
-        // ==========================================
         ResponseEntity<BeneficiarioResponseDTO> response = restTemplate.postForEntity(
                 getUrl(), dto, BeneficiarioResponseDTO.class
         );
 
-        // ==========================================
-        // ASSERT: Verificar o resultado
-        // ==========================================
         Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
         Assertions.assertNotNull(response.getBody(), "O corpo da resposta não deve ser nulo");
         Assertions.assertNotNull(response.getBody().idBeneficiario(), "ID do beneficiário não deve ser nulo");
@@ -90,27 +81,18 @@ class BeneficiarioControllerIntegrationTest {
     @Test
     @DisplayName("Deve retornar 400 quando CPF for inválido")
     void deveRetornar400QuandoCpfInvalido() {
-        // ==========================================
-        // ARRANGE: Preparar o cenário
-        // ==========================================
         BeneficiarioRequestDTO dto = new BeneficiarioRequestDTO(
                 "Lucas Mendes",
-                "00011122233", // CPF com dígitos inválidos
+                "00011122233",
                 "11988887777",
                 "Rua do Sol, 42",
                 "Vulnerabilidade"
         );
 
-        // ==========================================
-        // ACT: Executar a ação
-        // ==========================================
         ResponseEntity<String> response = restTemplate.postForEntity(
                 getUrl(), dto, String.class
         );
 
-        // ==========================================
-        // ASSERT: Verificar o resultado
-        // ==========================================
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         Assertions.assertNotNull(response.getBody(), "O corpo da resposta de erro não deve ser nulo");
     }

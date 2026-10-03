@@ -36,9 +36,6 @@ class BeneficiarioServiceTest {
     @Test
     @DisplayName("Deve criar beneficiário quando dados válidos")
     void deveCriarBeneficiarioQuandoDadosValidos() {
-        // ==========================================
-        // ARRANGE: Preparar o cenário
-        // ==========================================
         BeneficiarioRequestDTO dto = new BeneficiarioRequestDTO(
                 "Carlos Silva",
                 "52998224725",
@@ -61,14 +58,8 @@ class BeneficiarioServiceTest {
 
         Mockito.when(beneficiarioRepository.save(Mockito.any(Beneficiario.class))).thenReturn(beneficiarioSalvo);
 
-        // ==========================================
-        // ACT: Executar a ação
-        // ==========================================
         BeneficiarioResponseDTO resultado = beneficiarioService.criar(dto);
 
-        // ==========================================
-        // ASSERT: Verificar o resultado
-        // ==========================================
         Assertions.assertNotNull(resultado.idBeneficiario(), "ID do beneficiário não deve ser nulo");
         Assertions.assertEquals("Carlos Silva", resultado.nome());
         Assertions.assertEquals("52998224725", resultado.cpf());
@@ -79,9 +70,6 @@ class BeneficiarioServiceTest {
     @Test
     @DisplayName("Deve lançar exceção quando CPF já estiver cadastrado")
     void deveLancarExcecaoQuandoCpfJaExistir() {
-        // ==========================================
-        // ARRANGE: Preparar o cenário
-        // ==========================================
         BeneficiarioRequestDTO dto = new BeneficiarioRequestDTO(
                 "Carlos Silva",
                 "52998224725",
@@ -92,9 +80,6 @@ class BeneficiarioServiceTest {
 
         Mockito.when(beneficiarioRepository.existsByCpf(dto.cpf())).thenReturn(true);
 
-        // ==========================================
-        // ACT & ASSERT: Executar e verificar exceção
-        // ==========================================
         Assertions.assertThrows(CpfDuplicadoException.class, () -> beneficiarioService.criar(dto));
         Mockito.verify(beneficiarioRepository, Mockito.times(1)).existsByCpf(dto.cpf());
         Mockito.verify(beneficiarioRepository, Mockito.never()).save(Mockito.any());
@@ -103,9 +88,6 @@ class BeneficiarioServiceTest {
     @Test
     @DisplayName("Deve buscar beneficiário por ID com sucesso")
     void deveBuscarPorIdQuandoExistir() {
-        // ==========================================
-        // ARRANGE: Preparar o cenário
-        // ==========================================
         Beneficiario beneficiario = Beneficiario.builder()
                 .idBeneficiario(1L)
                 .nome("Maria Silva")
@@ -115,14 +97,8 @@ class BeneficiarioServiceTest {
 
         Mockito.when(beneficiarioRepository.findById(1L)).thenReturn(Optional.of(beneficiario));
 
-        // ==========================================
-        // ACT: Executar a ação
-        // ==========================================
         BeneficiarioResponseDTO resultado = beneficiarioService.buscarPorId(1L);
 
-        // ==========================================
-        // ASSERT: Verificar o resultado
-        // ==========================================
         Assertions.assertNotNull(resultado);
         Assertions.assertEquals(1L, resultado.idBeneficiario());
         Assertions.assertEquals("Maria Silva", resultado.nome());
@@ -132,14 +108,8 @@ class BeneficiarioServiceTest {
     @Test
     @DisplayName("Deve lançar exceção ao buscar ID inexistente")
     void deveLancarExcecaoQuandoBeneficiarioNaoExistir() {
-        // ==========================================
-        // ARRANGE: Preparar o cenário
-        // ==========================================
         Mockito.when(beneficiarioRepository.findById(999L)).thenReturn(Optional.empty());
 
-        // ==========================================
-        // ACT & ASSERT: Executar e verificar exceção
-        // ==========================================
         Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> beneficiarioService.buscarPorId(999L));
         Mockito.verify(beneficiarioRepository, Mockito.times(1)).findById(999L);
     }
@@ -147,9 +117,6 @@ class BeneficiarioServiceTest {
     @Test
     @DisplayName("Deve listar beneficiários com paginação")
     void deveListarBeneficiariosPaginados() {
-        // ==========================================
-        // ARRANGE: Preparar o cenário
-        // ==========================================
         Pageable pageable = PageRequest.of(0, 10);
         Beneficiario beneficiario = Beneficiario.builder()
                 .idBeneficiario(1L)
@@ -161,14 +128,8 @@ class BeneficiarioServiceTest {
         Page<Beneficiario> pagina = new PageImpl<>(List.of(beneficiario), pageable, 1);
         Mockito.when(beneficiarioRepository.findAll(pageable)).thenReturn(pagina);
 
-        // ==========================================
-        // ACT: Executar a ação
-        // ==========================================
         Page<BeneficiarioResponseDTO> resultado = beneficiarioService.listar(null, null, pageable);
 
-        // ==========================================
-        // ASSERT: Verificar o resultado
-        // ==========================================
         Assertions.assertEquals(1, resultado.getTotalElements());
         Assertions.assertEquals("Ana Souza", resultado.getContent().get(0).nome());
         Mockito.verify(beneficiarioRepository, Mockito.times(1)).findAll(pageable);
@@ -177,9 +138,6 @@ class BeneficiarioServiceTest {
     @Test
     @DisplayName("Deve atualizar beneficiário quando dados válidos")
     void deveAtualizarBeneficiarioQuandoDadosValidos() {
-        // ==========================================
-        // ARRANGE: Preparar o cenário
-        // ==========================================
         Beneficiario existente = Beneficiario.builder()
                 .idBeneficiario(1L)
                 .nome("Maria Silva")
@@ -199,14 +157,8 @@ class BeneficiarioServiceTest {
         Mockito.when(beneficiarioRepository.findById(1L)).thenReturn(Optional.of(existente));
         Mockito.when(beneficiarioRepository.save(Mockito.any(Beneficiario.class))).thenReturn(existente);
 
-        // ==========================================
-        // ACT: Executar a ação
-        // ==========================================
         BeneficiarioResponseDTO resultado = beneficiarioService.atualizar(1L, dto);
 
-        // ==========================================
-        // ASSERT: Verificar o resultado
-        // ==========================================
         Assertions.assertNotNull(resultado);
         Assertions.assertEquals("Maria Silva Santos", resultado.nome());
         Assertions.assertEquals("11977776666", resultado.telefone());
@@ -216,9 +168,6 @@ class BeneficiarioServiceTest {
     @Test
     @DisplayName("Deve atualizar parcialmente um beneficiário")
     void deveAtualizarParcialmenteBeneficiario() {
-        // ==========================================
-        // ARRANGE: Preparar o cenário
-        // ==========================================
         Beneficiario existente = Beneficiario.builder()
                 .idBeneficiario(1L)
                 .nome("Maria Silva")
@@ -237,14 +186,8 @@ class BeneficiarioServiceTest {
         Mockito.when(beneficiarioRepository.findById(1L)).thenReturn(Optional.of(existente));
         Mockito.when(beneficiarioRepository.save(Mockito.any(Beneficiario.class))).thenReturn(existente);
 
-        // ==========================================
-        // ACT: Executar a ação
-        // ==========================================
         BeneficiarioResponseDTO resultado = beneficiarioService.atualizarParcial(1L, dto);
 
-        // ==========================================
-        // ASSERT: Verificar o resultado
-        // ==========================================
         Assertions.assertEquals("11911112222", resultado.telefone());
         Assertions.assertEquals("Novo Endereço, 10", resultado.endereco());
         Mockito.verify(beneficiarioRepository, Mockito.times(1)).save(existente);
@@ -253,19 +196,10 @@ class BeneficiarioServiceTest {
     @Test
     @DisplayName("Deve deletar beneficiário quando ID existir")
     void deveDeletarBeneficiarioQuandoExistir() {
-        // ==========================================
-        // ARRANGE: Preparar o cenário
-        // ==========================================
         Mockito.when(beneficiarioRepository.existsById(1L)).thenReturn(true);
 
-        // ==========================================
-        // ACT: Executar a ação
-        // ==========================================
         beneficiarioService.deletar(1L);
 
-        // ==========================================
-        // ASSERT: Verificar o resultado
-        // ==========================================
         Mockito.verify(beneficiarioRepository, Mockito.times(1)).existsById(1L);
         Mockito.verify(beneficiarioRepository, Mockito.times(1)).deleteById(1L);
     }
@@ -273,14 +207,8 @@ class BeneficiarioServiceTest {
     @Test
     @DisplayName("Deve lançar exceção ao deletar ID inexistente")
     void deveLancarExcecaoAoDeletarInexistente() {
-        // ==========================================
-        // ARRANGE: Preparar o cenário
-        // ==========================================
         Mockito.when(beneficiarioRepository.existsById(999L)).thenReturn(false);
 
-        // ==========================================
-        // ACT & ASSERT: Executar e verificar exceção
-        // ==========================================
         Assertions.assertThrows(RecursoNaoEncontradoException.class, () -> beneficiarioService.deletar(999L));
         Mockito.verify(beneficiarioRepository, Mockito.never()).deleteById(999L);
     }

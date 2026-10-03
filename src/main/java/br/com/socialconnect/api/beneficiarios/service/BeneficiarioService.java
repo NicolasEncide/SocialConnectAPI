@@ -22,27 +22,22 @@ public class BeneficiarioService {
         this.repository = repository;
     }
 
-    // ✅ Listar com paginação e filtros opcionais
     public Page<BeneficiarioResponseDTO> listar(
             String nome, String cpf, Pageable pageable) {
 
         Page<Beneficiario> page;
 
         if (cpf != null && !cpf.isBlank()) {
-            // Filtro exato por CPF (prioridade)
             page = repository.findByCpf(cpf, pageable);
         } else if (nome != null && !nome.isBlank()) {
-            // Filtro parcial por nome
             page = repository.findByNomeContainingIgnoreCase(nome, pageable);
         } else {
-            // Sem filtro: lista paginada
             page = repository.findAll(pageable);
         }
 
         return page.map(this::toResponseDTO);
     }
 
-    // ✅ Buscar por ID
     public BeneficiarioResponseDTO buscarPorId(Long idBeneficiario) {
         return repository.findById(idBeneficiario)
                 .map(this::toResponseDTO)
@@ -50,7 +45,6 @@ public class BeneficiarioService {
                         "Beneficiário não encontrado com o ID: " + idBeneficiario));
     }
 
-    // ✅ Criar (POST)
     public BeneficiarioResponseDTO criar(BeneficiarioRequestDTO dto) {
         if (repository.existsByCpf(dto.cpf())) {
             throw new CpfDuplicadoException(dto.cpf());
@@ -66,14 +60,12 @@ public class BeneficiarioService {
         return toResponseDTO(repository.save(entity));
     }
 
-    // ✅ Atualizar total (PUT)
     public BeneficiarioResponseDTO atualizar(
             Long idBeneficiario, BeneficiarioRequestDTO dto) {
         Beneficiario entity = repository.findById(idBeneficiario)
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
                         "Beneficiário não encontrado com o ID: " + idBeneficiario));
 
-        // Se o CPF mudou e já pertence a outro registro
         if (!entity.getCpf().equals(dto.cpf()) && repository.existsByCpf(dto.cpf())) {
             throw new CpfDuplicadoException(dto.cpf());
         }
@@ -87,14 +79,12 @@ public class BeneficiarioService {
         return toResponseDTO(repository.save(entity));
     }
 
-    // ✅ Atualizar parcial (PATCH)
     public BeneficiarioResponseDTO atualizarParcial(
             Long idBeneficiario, BeneficiarioPatchDTO dto) {
         Beneficiario entity = repository.findById(idBeneficiario)
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
                         "Beneficiário não encontrado com o ID: " + idBeneficiario));
 
-        // Atualiza apenas os campos não-nulos
         if (dto.nome() != null) entity.setNome(dto.nome());
         if (dto.telefone() != null) entity.setTelefone(dto.telefone());
         if (dto.endereco() != null) entity.setEndereco(dto.endereco());
@@ -105,7 +95,6 @@ public class BeneficiarioService {
         return toResponseDTO(repository.save(entity));
     }
 
-    // ✅ Deletar (DELETE)
     public void deletar(Long idBeneficiario) {
         if (!repository.existsById(idBeneficiario)) {
             throw new RecursoNaoEncontradoException(
@@ -114,7 +103,6 @@ public class BeneficiarioService {
         repository.deleteById(idBeneficiario);
     }
 
-    // Mapeador Entity → Response DTO
     private BeneficiarioResponseDTO toResponseDTO(Beneficiario e) {
         return new BeneficiarioResponseDTO(
                 e.getIdBeneficiario(),

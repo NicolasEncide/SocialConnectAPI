@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // ✅ Erro de validação (400 Bad Request)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ProblemDetail> handleValidation(
             MethodArgumentNotValidException ex, WebRequest request) {
@@ -42,7 +41,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problem);
     }
 
-    // ✅ CPF duplicado (409 Conflict)
     @ExceptionHandler(CpfDuplicadoException.class)
     public ResponseEntity<ProblemDetail> handleCpfDuplicado(
             CpfDuplicadoException ex, WebRequest request) {
@@ -94,7 +92,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(problem);
     }
 
-    // ✅ Recurso não encontrado (404 Not Found)
     @ExceptionHandler(RecursoNaoEncontradoException.class)
     public ResponseEntity<ProblemDetail> handleNaoEncontrado(
             RecursoNaoEncontradoException ex, WebRequest request) {
@@ -112,7 +109,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
     }
 
-    // ✅ Parâmetro ou ordenação inválida (400 Bad Request)
     @ExceptionHandler({
             IllegalArgumentException.class,
             InvalidDataAccessApiUsageException.class,
@@ -134,7 +130,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problem);
     }
 
-    // ✅ Erro genérico (500 Internal Server Error)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleGenerico(
             Exception ex, WebRequest request) {

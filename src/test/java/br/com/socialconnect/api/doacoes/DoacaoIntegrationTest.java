@@ -59,7 +59,6 @@ class DoacaoIntegrationTest {
     @Test
     @DisplayName("Deve registrar um doador e uma doação com sucesso")
     void deveRegistrarDoadorEDoacaoComSucesso() throws Exception {
-        // 1. Criar doador
         DoadorRequestDTO doadorDTO = new DoadorRequestDTO("Instituto Solidário", TipoDoador.PESSOA_JURIDICA);
 
         String doadorResponse = mockMvc.perform(post("/api/v1/doadores")
@@ -72,7 +71,6 @@ class DoacaoIntegrationTest {
 
         Long idDoador = objectMapper.readTree(doadorResponse).get("idDoador").asLong();
 
-        // 2. Criar doação
         DoacaoRequestDTO doacaoDTO = new DoacaoRequestDTO(
                 idDoador,
                 LocalDate.now(),
@@ -95,7 +93,6 @@ class DoacaoIntegrationTest {
     @Test
     @DisplayName("Deve filtrar doações por tipo e intervalo de datas com paginação")
     void deveFiltrarDoacoesComSucesso() throws Exception {
-        // Criar doador
         DoadorRequestDTO doadorDTO = new DoadorRequestDTO("João da Silva", TipoDoador.PESSOA_FISICA);
         String doadorResponse = mockMvc.perform(post("/api/v1/doadores")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -104,7 +101,6 @@ class DoacaoIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
         Long idDoador = objectMapper.readTree(doadorResponse).get("idDoador").asLong();
 
-        // Criar doação 1 (Alimento, 2026-02-10)
         DoacaoRequestDTO d1 = new DoacaoRequestDTO(
                 idDoador,
                 LocalDate.of(2026, 2, 10),
@@ -117,7 +113,6 @@ class DoacaoIntegrationTest {
                         .content(objectMapper.writeValueAsString(d1)))
                 .andExpect(status().isCreated());
 
-        // Criar doação 2 (Roupa, 2026-03-15)
         DoacaoRequestDTO d2 = new DoacaoRequestDTO(
                 idDoador,
                 LocalDate.of(2026, 3, 15),
@@ -130,14 +125,12 @@ class DoacaoIntegrationTest {
                         .content(objectMapper.writeValueAsString(d2)))
                 .andExpect(status().isCreated());
 
-        // Filtrar apenas por tipo ALIMENTO
         mockMvc.perform(get("/api/v1/doacoes")
                         .param("tipo", "ALIMENTO"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(1)))
                 .andExpect(jsonPath("$.content[0].tipo", is("ALIMENTO")));
 
-        // Filtrar por período que só pega a doação 2
         mockMvc.perform(get("/api/v1/doacoes")
                         .param("dataInicio", "2026-03-01")
                         .param("dataFim", "2026-03-31"))
@@ -149,17 +142,14 @@ class DoacaoIntegrationTest {
     @Test
     @DisplayName("Deve listar doações com sort contendo colchetes ou placeholder string sem lançar erro 500")
     void deveListarDoacoesComSortComColchetesSemErro500() throws Exception {
-        // Envio com colchetes e aspas (formato do array do Swagger UI)
         mockMvc.perform(get("/api/v1/doacoes")
                         .param("sort", "[\"valor,desc\"]"))
                 .andExpect(status().isOk());
 
-        // Envio com o placeholder padrão do Swagger: [ "string" ]
         mockMvc.perform(get("/api/v1/doacoes")
                         .param("sort", "[ \"string\" ]"))
                 .andExpect(status().isOk());
 
-        // Envio com string simples
         mockMvc.perform(get("/api/v1/doacoes")
                         .param("sort", "string"))
                 .andExpect(status().isOk());
