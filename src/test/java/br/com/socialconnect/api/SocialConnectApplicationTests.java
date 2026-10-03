@@ -10,5 +10,6 @@ class SocialConnectApplicationTests {
 
     @Test
     void contextLoads() {
+        // Verifica se o contexto do Spring sobe corretamente
     }
 }

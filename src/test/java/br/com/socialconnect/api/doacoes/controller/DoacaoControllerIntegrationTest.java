@@ -70,6 +70,9 @@ class DoacaoControllerIntegrationTest {
     @Test
     @DisplayName("Deve criar doação quando dados válidos")
     void deveCriarDoacaoQuandoDadosValidos() {
+        // ==========================================
+        // ARRANGE: Preparar o cenário
+        // ==========================================
         Doador doador = doadorRepository.save(Doador.builder()
                 .nome("Instituto Solidário")
                 .tipo(TipoDoador.PESSOA_JURIDICA)
@@ -83,10 +86,16 @@ class DoacaoControllerIntegrationTest {
                 "Doação de teste para projeto social"
         );
 
+        // ==========================================
+        // ACT: Executar a ação
+        // ==========================================
         ResponseEntity<DoacaoResponseDTO> response = restTemplate.postForEntity(
                 getUrl(), dto, DoacaoResponseDTO.class
         );
 
+        // ==========================================
+        // ASSERT: Verificar o resultado
+        // ==========================================
         Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
         Assertions.assertNotNull(response.getBody(), "O corpo da resposta não deve ser nulo");
         Assertions.assertNotNull(response.getBody().idDoacao(), "ID da doação não deve ser nulo");
@@ -97,6 +106,9 @@ class DoacaoControllerIntegrationTest {
     @Test
     @DisplayName("Deve retornar 400 quando data da doação for futura")
     void deveRetornar400QuandoDataFutura() {
+        // ==========================================
+        // ARRANGE: Preparar o cenário
+        // ==========================================
         Doador doador = doadorRepository.save(Doador.builder()
                 .nome("Doador Futuro")
                 .tipo(TipoDoador.PESSOA_FISICA)
@@ -110,10 +122,16 @@ class DoacaoControllerIntegrationTest {
                 "Doação com data futura inválida"
         );
 
+        // ==========================================
+        // ACT: Executar a ação
+        // ==========================================
         ResponseEntity<String> response = restTemplate.postForEntity(
                 getUrl(), dto, String.class
         );
 
+        // ==========================================
+        // ASSERT: Verificar o resultado
+        // ==========================================
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         Assertions.assertNotNull(response.getBody(), "O corpo da resposta com erro não deve ser nulo");
         Assertions.assertTrue(response.getBody().toLowerCase().contains("futuro"),
