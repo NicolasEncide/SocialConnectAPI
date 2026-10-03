@@ -60,6 +60,40 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
     }
 
+    @ExceptionHandler(NomeDuplicadoException.class)
+    public ResponseEntity<ProblemDetail> handleNomeDuplicado(
+            NomeDuplicadoException ex, WebRequest request) {
+
+        ProblemDetail problem = new ProblemDetail(
+                "https://socialconnect.api/errors/nome-duplicado",
+                "Nome já cadastrado",
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", ""),
+                LocalDateTime.now(),
+                List.of()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
+    }
+
+    @ExceptionHandler(EstoqueMenorQueZeroException.class)
+    public ResponseEntity<ProblemDetail> handleEstoqueMenorQueZero(
+            EstoqueMenorQueZeroException ex, WebRequest request) {
+
+        ProblemDetail problem = new ProblemDetail(
+                "https://socialconnect.api/errors/estoque-invalido",
+                "Estoque não pode ser negativo",
+                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", ""),
+                LocalDateTime.now(),
+                List.of()
+        );
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(problem);
+    }
+
     // ✅ Recurso não encontrado (404 Not Found)
     @ExceptionHandler(RecursoNaoEncontradoException.class)
     public ResponseEntity<ProblemDetail> handleNaoEncontrado(
